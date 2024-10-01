@@ -1,0 +1,31 @@
+.product-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+  .product-item {
+    border: 1px solid #ccc;
+    margin: 1em 0;
+    padding: 1em;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+  }
+
+  .product-item img {
+    max-width: 100px;
+    margin-right: 20px;
+  }
+
+  .product-info {
+    flex-grow: 1;
+  }
+
+  .product-info h2 {
+    margin: 0;
+    font-size: 1.5em;
+  }
+
+  .product-info p {
+    margin: 0.5em 0;
+  }

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="assets/styles/products.css">
+</head>
+<body>
+    <header>
+        <h1>Resultados de búsqueda</h1>
+    </header>
+    
+    <main>
+        <!-- Formulario de búsqueda -->
+        <section aria-labelledby="search-title">
+            <h2 id="search-title">Realiza una búsqueda</h2>
+            <form action="/items" method="get" role="search" aria-label="Formulario de búsqueda de ítems">
+                <label for="search-input">Buscar:</label>
+                <input 
+                type="search" 
+                id="search-input" 
+                name="search" 
+                placeholder="Buscar ítems..." 
+                required 
+                aria-required="true">
+                <button type="submit">Buscar</button>
+            </form>
+        </section>
+
+        <hr>
+        
+        <!-- Resultados de la búsqueda -->
+        <section aria-labelledby="results-title">
+            <h2 id="results-title">Resultados de la búsqueda</h2>
+            <p>Mostrando 4 resultados para <strong id="search-text"></strong>:</p>
+            
+            <!-- Lista de productos -->
+            <ul id="product-list"></ul>
+        </section>
+    </main>
+
+    <template id="product-template">
+        <li class="product-item">
+          <article>
+            <img src="" alt="Imagen del producto">
+            <div class="product-info">
+              <h2><a href="">Nombre del Producto</a></h2>
+              <p>Envío gratis: <strong class="free-shipping"></strong></p>
+              <p>Precio: $<span class="price"></span></p>
+            </div>
+          </article>
+        </li>
+    </template>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);    
+        const search = urlParams.get('search');
+
+        if(search)
+        {
+            // Obtener el contenedor de la lista
+            const productList = document.getElementById('product-list');
+
+            // Obtener la plantilla
+            const template = document.getElementById('product-template').content;
+
+            document.getElementById('search-text').innerText = search;
+            document.getElementById('search-input').value = search;
+
+            fetch(`/api/items?q=${search}`)
+                .then( result => result.json())
+                .then( result => {
+                    
+                    const items = result.items;
+
+                    if(Array.isArray(items))
+                    {
+                        items.forEach(item => {
+
+                            // Clonar la plantilla
+                            const clone = document.importNode(template, true);
+
+                            // Rellenar la plantilla con datos
+                            clone.querySelector('h2 > a').textContent = item.title;
+                            clone.querySelector('h2 > a').href = `/items/${item.id}`;
+                            clone.querySelector('.free-shipping').textContent = item.free_shipping ? 'Si' : 'No';
+                            clone.querySelector('.price').textContent = item.price.amount;
+                            clone.querySelector('img').src = item.picture;
+                            clone.querySelector('img').alt = `Imagen de ${item.title}`;
+
+                            // Añadir la plantilla al DOM
+                            productList.appendChild(clone);
+                        })
+                    }
+
+                });
+        }
+    </script>
+</body>
+</html>

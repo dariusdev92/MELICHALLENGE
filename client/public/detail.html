@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <header>
+        <h1>Detalle de producto</h1>
+    </header>
+    
+    <main>
+        <!-- Formulario de búsqueda -->
+        <section aria-labelledby="search-title">
+            <h2 id="search-title">Realiza una búsqueda</h2>
+            <form action="/items" method="get" role="search" aria-label="Formulario de búsqueda de ítems">
+                <label for="search-input">Buscar:</label>
+                <input 
+                type="search" 
+                id="search-input" 
+                name="search" 
+                placeholder="Buscar ítems..." 
+                required 
+                aria-required="true">
+                <button type="submit">Buscar</button>
+            </form>
+        </section>
+
+        <hr>
+
+        <!-- Resultados de la búsqueda -->
+        <section id="item-detail">
+        </section>
+
+        <template id="product-template">
+            <article>
+                <img src="" alt="Imagen del producto">
+                <div class="product-info">
+                  <h2>Nombre del Producto</h2>
+                  <p class="desc"></p>
+                  <p>Envío gratis: <strong class="free-shipping"></strong></p>
+                  <p>Stock: <strong class="sold-quantity"></strong></p>
+                  <p>Precio: $<strong class="price"></strong></p>
+                </div>
+            </article>
+        </template>
+    </main>
+    <script>
+        const path = window.location.pathname;
+        const segments = path.split('/');
+        const productId = segments.pop() || segments.pop();
+    
+        if(productId)
+        {
+            // Obtener el contenedor de la lista
+            const itemDetail = document.getElementById('item-detail');
+    
+            // Obtener la plantilla
+            const template = document.getElementById('product-template').content;
+    
+            fetch(`/api/items/${productId}`)
+                .then( result => result.json())
+                .then( result => {
+                    
+                    const item = result.item;
+    
+                    // Clonar la plantilla
+                    const clone = document.importNode(template, true);
+    
+                    // Rellenar la plantilla con datos
+                    clone.querySelector('h2').textContent = item.title;
+                    clone.querySelector('.desc').textContent = item.description;
+                    clone.querySelector('.free-shipping').textContent = item.free_shipping ? 'Si' : 'No';
+                    clone.querySelector('.sold-quantity').textContent = item.sold_quantity;
+                    clone.querySelector('.price').textContent = item.price.amount;
+                    clone.querySelector('img').src = item.picture;
+                    clone.querySelector('img').alt = `Imagen de ${item.title}`;
+
+                    // Añadir la plantilla al DOM
+                    itemDetail.appendChild(clone);
+    
+                });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <header>
+        <h1>Buscar Ítems</h1>
+    </header>
+    
+    <main>
+        <!-- Formulario de búsqueda -->
+        <section aria-labelledby="search-title">
+            <h2 id="search-title">Realiza una búsqueda</h2>
+            <form action="/items" method="get" role="search" aria-label="Formulario de búsqueda de ítems">
+                <label for="search-input">Buscar:</label>
+                <input 
+                type="search" 
+                id="search-input" 
+                name="search" 
+                placeholder="Buscar ítems..." 
+                required 
+                aria-required="true">
+                <button type="submit">Buscar</button>
+            </form>
+        </section>
+    </main>
+</body>
+</html>
