@@ -1,4 +1,4 @@
-export default interface MeliProductResultDto
+export default interface MeliQueryProductDto
 {
     id: string,
     title: string,
@@ -8,5 +8,8 @@ export default interface MeliProductResultDto
     currency_id: string,
     shipping: {
         free_shipping: boolean
+    },
+    seller: {
+        id: number
     }
 }

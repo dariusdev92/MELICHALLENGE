@@ -1,12 +1,27 @@
-import ItemDetailDto from "../dtos/ItemDetailDto";
 import ItemResultDto from "../dtos/ItemResultDto";
-import ItemsQueryResultDto from "../dtos/ItemsQueryResultDto";
+import QueryItemDto from "../dtos/item/QueryItemDto";
+import QueryResultDto from "../dtos/QueryResultDto";
+import { MeliCategoryDto } from "../dtos/meli/MeliCategoryDto";
 import MeliProductDescriptionDto from "../dtos/meli/MeliProductDescriptionDto";
-import MeliProductDetailDto from "../dtos/meli/MeliProductDetailDto";
-import MeliProductResultDto from "../dtos/meli/MeliProductResultDto";
-import MeliProductsResultDto from "../dtos/meli/MeliProductsResultDto";
-import MeliProductsResultFiltersDto from "../dtos/meli/MeliProductsResultFiltersDto";
-import NumericHelper from "../helpers/NumericHelper";
+import MeliProductDto from "../dtos/meli/MeliProductDto";
+import MeliQueryProductDto from "../dtos/meli/MeliQueryProductDto";
+import MeliQueryResultDto from "../dtos/meli/MeliQueryResultDto";
+import Helper from "../helpers/Helper";
+import MeliSellerDto from "../dtos/meli/MeliSellerDto";
+
+// const getQualityPictureFromProduct = (prdouct: MeliProductDetailDto, minWidth:number = 720 ): string => {
+
+//     const thumbnail = prdouct.thumbnail;
+//     const pictures = prdouct.pictures || [];
+//     const defaultPicture = pictures[0];
+//     const bestPicture = pictures.find(picture => {
+//         const size = picture.max_size;
+//         const width = parseInt(size.split('x')[0]);
+//         return width && width >= minWidth;
+//     });
+
+//     return bestPicture?.url || defaultPicture?.url || thumbnail;
+// }
 
 export default class MeliApiMapper
 {
@@ -16,14 +31,11 @@ export default class MeliApiMapper
      * @param filters Filtro del resultado de búsqueda
      * @returns Path de categorías
      */
-    static ResultFiltersToItemsCategories(filters: MeliProductsResultFiltersDto[]): string[]
+    static ItemsCategories(categories: MeliCategoryDto | undefined): string[]
     {
-        const categoriesFilter = filters.find( filter => filter.id = 'category' );
-        const productCategories = categoriesFilter?.values[0];
-
-        if(productCategories)
+        if(categories)
         {
-            const itemCategories = productCategories.path_from_root.map( category => category.name );
+            const itemCategories = categories.path_from_root.map( category => category.name );
             return itemCategories;
         }
         else
@@ -37,10 +49,10 @@ export default class MeliApiMapper
      * @param product 
      * @returns 
      */
-    static ProductResultToItemResult(product: MeliProductResultDto): ItemResultDto
+    static ProductResultToItemResult(product: MeliQueryProductDto, seller: MeliSellerDto | null): QueryItemDto
     {
         // Esqueleto por defecto
-        const item: ItemResultDto = {
+        const item: QueryItemDto = {
             id: "",
             title: "",
             price: {
@@ -50,11 +62,12 @@ export default class MeliApiMapper
             },
             picture: "",
             condition: "",
-            free_shipping: false
+            free_shipping: false,
+            city: ""
         }
 
         // Obtengo los decimales del precio
-        const [ amount, decimals ] = NumericHelper.SplitPrice(product.price);
+        const [ amount, decimals ] = Helper.SplitPrice(product.price);
 
         // Mapeo los datos
         item.id = product.id;
@@ -65,6 +78,7 @@ export default class MeliApiMapper
         item.picture = product.thumbnail;
         item.condition = product.condition;
         item.free_shipping = product.shipping?.free_shipping || item.free_shipping;
+        item.city = seller?.address?.city || item.city;
 
         return item;
     }
@@ -74,10 +88,10 @@ export default class MeliApiMapper
      * @param productsResult 
      * @returns 
      */
-    static ProductsResultToItems(productsResult: MeliProductsResultDto): ItemsQueryResultDto
+    static ProductsResultToItems(productsResult: MeliQueryResultDto, sellers:Array<MeliSellerDto | null>): QueryResultDto
     {   
         // Esqueleto por defecto
-        const itemsResult: ItemsQueryResultDto = {
+        const itemsResult: QueryResultDto = {
             author: {
                 name: "Darío",
                 lastname: "Gómez Fisicaro"
@@ -86,9 +100,18 @@ export default class MeliApiMapper
             items: []
         };
 
+        const categoryFilter = productsResult.filters.find( filter => filter.id = 'category' );
+        const productCategory = <MeliCategoryDto>categoryFilter?.values[0];
+
         // Mapeos
-        itemsResult.categories = MeliApiMapper.ResultFiltersToItemsCategories(productsResult.filters);
-        itemsResult.items = productsResult.results?.map<ItemResultDto>( product => MeliApiMapper.ProductResultToItemResult(product) );
+        itemsResult.categories = MeliApiMapper.ItemsCategories(productCategory);
+        itemsResult.items = productsResult.results?.map<QueryItemDto>((product, index) => {
+
+            const seller = sellers[index];
+            const model = MeliApiMapper.ProductResultToItemResult(product, seller);
+            return model;
+
+        });
 
         return itemsResult;
     }
@@ -99,19 +122,21 @@ export default class MeliApiMapper
      * @param productDescription 
      * @returns 
      */
-    static ProductsDetailToItemsDetail
+    static ProductDetailToItemDetail
     (
-        productDetail: MeliProductDetailDto,
-        productDescription: MeliProductDescriptionDto
+        productDetail: MeliProductDto,
+        productDescription: MeliProductDescriptionDto,
+        category: MeliCategoryDto | undefined
     )
-    : ItemDetailDto
+    : ItemResultDto
     {
         // Esqueleto por defecto
-        const itemDetail: ItemDetailDto = {
+        const itemDetail: ItemResultDto = {
             author: {
                 name: "Darío",
                 lastname: "Gómez Fisicaro"
             },
+            categories: [],
             item: {
                 id: "",
                 title: "",
@@ -129,12 +154,12 @@ export default class MeliApiMapper
         }
 
         // Obtengo los decimales del precio
-        const [ amount, decimals ] = NumericHelper.SplitPrice(productDetail.price);
-
+        const [ amount, decimals ] = Helper.SplitPrice(productDetail.price);
+        
         // Mapeo
         itemDetail.item.id = productDetail.id;
         itemDetail.item.title = productDetail.title;
-        itemDetail.item.picture = productDetail.thumbnail;
+        itemDetail.item.picture = productDetail.pictures[0]?.url || productDetail.thumbnail;
         itemDetail.item.condition = productDetail.condition;
         itemDetail.item.free_shipping = productDetail.shipping?.free_shipping || itemDetail.item.free_shipping;
         itemDetail.item.sold_quantity = productDetail.initial_quantity;
@@ -142,6 +167,8 @@ export default class MeliApiMapper
         itemDetail.item.price.amount = amount;     
         itemDetail.item.price.decimals = decimals;      
         itemDetail.item.description = productDescription.plain_text;
+
+        itemDetail.categories = MeliApiMapper.ItemsCategories(category);
 
         return itemDetail;
     }

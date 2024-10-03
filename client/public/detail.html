@@ -3,84 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Detail</title>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/styles/theme.css">
+    <link rel="stylesheet" href="/assets/styles/style.css">
+    <link rel="stylesheet" href="/assets/styles/detail.css">
 </head>
 <body>
-    <header>
-        <h1>Detalle de producto</h1>
+    <header id="top-bar">
+        <div class="search-container">
+            <div class="logo">
+                <a href="/">
+                    <img src="/assets/images/logo.jpg" alt="ML Logo" />
+                </a>
+            </div>
+            <form action="/items" method="GET" role="search" aria-label="Buscar productos">
+                <input type="search" id="search-input" name="search" placeholder="Nunca dejes de buscar" required aria-required="true">
+                <button type="submit">
+                    <span class="material-symbols-outlined">
+                        search
+                    </span>
+                </button>
+            </form>
+        </div>
     </header>
     
-    <main>
-        <!-- Formulario de búsqueda -->
-        <section aria-labelledby="search-title">
-            <h2 id="search-title">Realiza una búsqueda</h2>
-            <form action="/items" method="get" role="search" aria-label="Formulario de búsqueda de ítems">
-                <label for="search-input">Buscar:</label>
-                <input 
-                type="search" 
-                id="search-input" 
-                name="search" 
-                placeholder="Buscar ítems..." 
-                required 
-                aria-required="true">
-                <button type="submit">Buscar</button>
-            </form>
+    <main id="content">
+        <section>
+            <!-- Lista de categorias -->
+            <ul id="category-list" class="breadcrumb"></ul>
+
+            <!-- Detalle del producto  -->
+            <div id="item-detail" class="card"></div>
         </section>
+    </main>    
 
-        <hr>
-
-        <!-- Resultados de la búsqueda -->
-        <section id="item-detail">
-        </section>
-
-        <template id="product-template">
-            <article>
+    <template id="product-template">
+        <article>
+            <div class="product-info">                
                 <img src="" alt="Imagen del producto">
-                <div class="product-info">
-                  <h2>Nombre del Producto</h2>
-                  <p class="desc"></p>
-                  <p>Envío gratis: <strong class="free-shipping"></strong></p>
-                  <p>Stock: <strong class="sold-quantity"></strong></p>
-                  <p>Precio: $<strong class="price"></strong></p>
-                </div>
-            </article>
-        </template>
-    </main>
-    <script>
+                <h2>Descripción del producto</h2>
+                <p class="desc"></p>
+            </div>
+            <div class="side-bar">
+                <p class="meta-info"><span class="condition">Nuevo</span> - <span class="sold-quantity"></span></p>
+                <h1>Nombre del Producto</h1>
+                <p class="price">
+                    <span class="currency">$</span>
+                    <span class="amount"></span>
+                    <span class="decimal">00</span>
+                    <span class="free-shipping material-symbols-outlined" title="Envío gratis">
+                        local_shipping
+                    </span>
+                </p>
+                <button class="buy-button">Comprar</button>
+            </div>
+        </article>
+    </template>
+
+    <script src="/assets/scripts/common.js"></script>
+    <script type="module">
         const path = window.location.pathname;
         const segments = path.split('/');
         const productId = segments.pop() || segments.pop();
+        
+        const resizeImage = (image) => {
+
+            image.style.height = `${image.clientWidth}px`;
+
+        }
     
         if(productId)
         {
             // Obtener el contenedor de la lista
-            const itemDetail = document.getElementById('item-detail');
+            const $itemDetail = document.getElementById('item-detail');
+            const $categoryList = document.getElementById('category-list');
     
             // Obtener la plantilla
-            const template = document.getElementById('product-template').content;
-    
-            fetch(`/api/items/${productId}`)
-                .then( result => result.json())
-                .then( result => {
-                    
-                    const item = result.item;
-    
-                    // Clonar la plantilla
-                    const clone = document.importNode(template, true);
-    
-                    // Rellenar la plantilla con datos
-                    clone.querySelector('h2').textContent = item.title;
-                    clone.querySelector('.desc').textContent = item.description;
-                    clone.querySelector('.free-shipping').textContent = item.free_shipping ? 'Si' : 'No';
-                    clone.querySelector('.sold-quantity').textContent = item.sold_quantity;
-                    clone.querySelector('.price').textContent = item.price.amount;
-                    clone.querySelector('img').src = item.picture;
-                    clone.querySelector('img').alt = `Imagen de ${item.title}`;
+            const $template = document.getElementById('product-template').content;
+            
+            // Obtengo el resultado
+            const result = await fetch(`/api/items/${productId}`).then( result => result.json());
 
-                    // Añadir la plantilla al DOM
-                    itemDetail.appendChild(clone);
-    
-                });
+            const item = result.item;
+            const categories = result.categories;
+
+            // Clonar la plantilla
+            const clone = document.importNode($template, true);
+            const $productItem = clone.querySelector('article');
+            const currency = await getCurrency(item.price.currency);
+            const $freeShipping = $productItem.querySelector('.free-shipping');
+            const $img = $productItem.querySelector('img');
+
+            // Rellenar la plantilla con datos
+            $productItem.querySelector('h1').textContent = item.title;
+            $productItem.querySelector('.desc').innerText = item.description;
+            $productItem.querySelector('.sold-quantity').textContent = item.sold_quantity;
+            $productItem.querySelector('.price .currency').textContent = currency.symbol;
+            $productItem.querySelector('.price .amount').textContent = formatNumberWithDots(item.price.amount);;
+            $productItem.querySelector('.price .decimal').textContent = item.price.decimals || '00';
+            $productItem.querySelector('.meta-info .condition').textContent = getConditionText(item.condition);
+            $productItem.querySelector('.meta-info .sold-quantity').textContent = getSoldQuantityText(item.sold_quantity);
+            $img.src = item.picture;
+            $img.alt = `Imagen de ${item.title}`;
+            $img.onload = () => {
+                resizeImage($img)
+            };
+
+            window.addEventListener('resize', () => resizeImage($img));
+
+            if(item.free_shipping)
+            {
+                $freeShipping.classList.remove('off');
+                $freeShipping.classList.add('on');
+            }
+            else
+            {
+                $freeShipping.classList.remove('on');
+                $freeShipping.classList.add('off');
+            }
+
+            if(Array.isArray(categories))
+            {
+                categories.forEach(category => {
+
+                    const li = document.createElement('li');
+                    li.textContent = category;
+                    $categoryList.appendChild(li);
+
+                })
+            }
+
+            // Añadir la plantilla al DOM
+            $itemDetail.appendChild(clone);
         }
     </script>
 </body>

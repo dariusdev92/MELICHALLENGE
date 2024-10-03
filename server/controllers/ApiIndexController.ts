@@ -13,21 +13,4 @@ export default class ApiIndexController
     {
 
     }
-
-    @GET()
-    @route('/currency/:id')
-    public async getCurrencySymbolById(request: Request, response: Response)
-    {
-        const currencyId = request.params.id;    
-
-        if(currencyId)
-        {
-            const item = await this.meliService.getCurrencySymbol(currencyId);
-            response.json(item);
-        }
-        else
-        {
-            throw new HttpNotFoundError();
-        }
-    }
 }

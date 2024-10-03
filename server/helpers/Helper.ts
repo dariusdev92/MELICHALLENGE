@@ -1,4 +1,4 @@
-export default class NumericHelper
+export default class Helper
 {
     static SplitPrice(price: number = 0): [ amount: number, decimals: number ]
     {

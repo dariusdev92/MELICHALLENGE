@@ -1,12 +1,12 @@
-import ItemDetailDto from "../dtos/ItemDetailDto";
-import ItemsQueryResultDto from "../dtos/ItemsQueryResultDto";
+import ItemResultDto from "../dtos/ItemResultDto";
+import MeliQueryResultDto from "../dtos/meli/MeliQueryResultDto";
+import MeliSellerDto from "../dtos/meli/MeliSellerDto";
+import QueryResultDto from "../dtos/QueryResultDto";
 import MeliHttpClient from "../httpClients/MeliHttpClient";
 import MeliApiMapper from "../mappers/MeliApiMapper";
 
 export default class MeliService
 {
-    static currencySymbol: Map<string, string> = new Map();
-
     constructor
     (
         private meliHttpClient: MeliHttpClient
@@ -18,17 +18,20 @@ export default class MeliService
      * Obtiene resultados de búsqueda desde la API de MLA y los
      * mapea a un objeto que implementa la interface ```ItemsQueryResultDto```
      * @param {string} query Texto de la consulta
-     * @returns {ItemsQueryResultDto} Objeto ItemsQueryResultDto
+     * @returns {QueryResultDto} Objeto ItemsQueryResultDto
      */
-    public async getItemsByQuery(query: string): Promise<ItemsQueryResultDto>
+    public async getItemsByQuery(query: string): Promise<QueryResultDto>
     {
         const products = await this.meliHttpClient.getProductsByQuery(query);
 
         // Obtengo los primeros 4 resultados
         products.results = products.results.slice(0, 4);
 
+        // Obtengo información del seller
+        const sellers = await this.getSellersFromQueryResult(products);
+
         // Mapeo los datos
-        const result = MeliApiMapper.ProductsResultToItems(products);
+        const result = MeliApiMapper.ProductsResultToItems(products, sellers);
 
         return result;
     }
@@ -37,43 +40,43 @@ export default class MeliService
      * Obtiene información de un producto desde la API de MLA
      * y los mapea a un objeto que implementa la interface ```ItemDetailDto```
      * @param {string} itemId Id del item a buscar
-     * @returns {ItemDetailDto} Objecto ItemDetailDto
+     * @returns {ItemResultDto} Objecto ItemDetailDto
      */
-    public async getItemById(itemId: string): Promise<ItemDetailDto>
+    public async getItemById(itemId: string): Promise<ItemResultDto>
     {   
-        // Disparo las dos consultas asyncronicas simultaneamente
+        // Disparo las consultas asyncronicas simultaneamente
         const productAsync = this.meliHttpClient.getProductById(itemId);
         const productDescriptionAsync = this.meliHttpClient.getProductDescriptionById(itemId);
+        const categoryAsync =  productAsync.then(product => this.meliHttpClient.getCategory(product.category_id));
         
-        // Espero el resultado de ambos para continuar
-        const [ product , productDescription ] = await Promise.all([ productAsync , productDescriptionAsync ]);
+        // Espero los resultados para continuar
+        const [ product , productDescription, category ] = await Promise.all([ productAsync , productDescriptionAsync, categoryAsync ]);
         
         // Mepeo los datos
-        const result = MeliApiMapper.ProductsDetailToItemsDetail(product, productDescription);
+        const result = MeliApiMapper.ProductDetailToItemDetail(product, productDescription, category);
 
         return result;
     }
 
-    /**
-     * Busca el sombolo de una divisa, en caso de no tenerlo
-     * lo busca desde la API de MLA, lo guarda y lo retorna.
-     * @param {string} currencyId Id de la divisa a buscar 
-     * @returns {string} Simbolo de la divisa
-     */
-    public async getCurrencySymbol(currencyId: string): Promise<string>
-    {
-        let symbol = MeliService.currencySymbol.get(currencyId);
+    //#region private
 
-        if(symbol)
-        {
-            return symbol;
-        }
-        else
-        {            
-            const currency = await this.meliHttpClient.getCurrencyById(currencyId);
-            symbol = currency.symbol;
-            MeliService.currencySymbol.set(currencyId, symbol);
-            return symbol;
-        }
+    /**
+     * Obtengo el seller para cada resultado y los devuelvo en el mismo orden
+     * @param queryResult 
+     * @returns 
+     */
+    private async getSellersFromQueryResult(queryResult: MeliQueryResultDto): Promise<Array<MeliSellerDto | null>>
+    {   
+        const sellersAsync = queryResult.results.map( product => {
+            return this.meliHttpClient
+                            .getSellerById(product.seller.id)
+                            .catch( err => null );
+        });
+
+        const sellers = await Promise.all(sellersAsync);
+
+        return sellers;
     }
+
+    //#endregion
 }

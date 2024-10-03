@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import MeliService from "../services/MeliService";
 import { GET, route } from "awilix-express";
-import ItemsQueryResultDto from "../dtos/ItemsQueryResultDto";
-import ItemDetailDto from "../dtos/ItemDetailDto";
+import QueryResultDto from "../dtos/QueryResultDto";
+import ItemResultDto from "../dtos/ItemResultDto";
 import HttpNotFoundError from "../errors/HttpNotFoundError";
 
 @route('/api/items')
@@ -17,7 +17,7 @@ export default class ApiItemController
     }
 
     @GET() 
-    public async getItemsFromQuery(request: Request, response: Response<ItemsQueryResultDto>)
+    public async getItemsFromQuery(request: Request, response: Response<QueryResultDto>)
     {
         const query = request.query.q?.toString();
 
@@ -34,7 +34,7 @@ export default class ApiItemController
     
     @GET()
     @route('/:id')
-    public async getItemById(request: Request, response: Response<ItemDetailDto>)
+    public async getItemById(request: Request, response: Response<ItemResultDto>)
     {
         const itemId = request.params.id;    
 
