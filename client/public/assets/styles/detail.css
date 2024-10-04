@@ -10,6 +10,7 @@
 {
     display: flex;
     width: 100%;
+    gap: 1rem;
 }
 
 #item-detail .product-info
@@ -34,7 +35,7 @@
 #item-detail .product-info .desc
 {
     word-break: break-word;
-    font-size: var(--main-font-medium-size);
+    font-size: .75rem;
     color: var(--main-text-color-soft);
 }
 
@@ -51,6 +52,7 @@
     font-size: var(--main-font-medium-size);
     margin-bottom: var(--main-medium-gap);
     font-weight: 400;
+    color: var(--main-text-color-soft);
 }
 
 #item-detail .side-bar h1
@@ -75,4 +77,5 @@
     text-align: center;
     color: var(--buy-button-text-color);
     cursor: pointer;
+    font-weight: 500;
 }

@@ -126,6 +126,11 @@
                 $freeShipping.classList.add('off');
             }
 
+            if(!item.description)
+            {
+                $productItem.querySelector('.product-info h2').style.display = 'none';                
+            }
+
             if(Array.isArray(categories))
             {
                 categories.forEach(category => {
