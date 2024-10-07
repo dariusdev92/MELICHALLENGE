@@ -4,7 +4,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "npx ts-node server/index.ts"
+    "build": "npx webpack",
+    "server": "npx ts-node server/index.ts",
+    "start": "npm run build && npm run server"
   },
   "author": "Dario Gomez Fisicaro",
   "license": "ISC",

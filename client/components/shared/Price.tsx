@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import PriceDto from "../../dtos/PriceDto";
-import { formatNumberWithDots, getCurrency } from "../../helpers";
+import { formatDecimals, formatNumberWithDots, getCurrency } from "../../helpers";
 
 interface props
 {
     price: PriceDto
-    freeShipping: boolean;
+    freeShipping?: boolean;
+    hasDecimals?: boolean;
 }
 
-export default function Price({ price, freeShipping = false }: props)
+export default function Price({ price, hasDecimals = true, freeShipping = false }: props)
 {
     const [currency, setCurrency] = useState<string>('$');
 
@@ -29,7 +30,7 @@ export default function Price({ price, freeShipping = false }: props)
         <p className="price">
             <span className="currency">{currency}</span>
             <span className="amount">{formatNumberWithDots(price.amount)}</span>
-            <span className="decimal">{price.decimals}</span>            
+            { hasDecimals && <span className="decimal">{formatDecimals(price.decimals)}</span> }            
             {freeShipping && <FreeShipping />}
         </p>
     )

@@ -27,7 +27,7 @@ export default function ProductFullItem({ product }: props)
 
             <div className="side-bar">
                 <span className="meta-info">
-                    <span className="condition">{getConditionText(product.condition)}</span> - 
+                    <span className="condition">{getConditionText(product.condition)}</span>&nbsp;-&nbsp; 
                     <span className="sold-quantity">{getSoldQuantityText(product.sold_quantity)}</span>
                 </span>
 

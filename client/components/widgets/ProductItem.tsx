@@ -35,7 +35,7 @@ export default function ProductItem({ product }: props)
             <XImage src={src} alt={product.title} />
 
             <div className="product-info">              
-                <Price {...{ price, freeShipping }} />
+                <Price {...{ price, freeShipping, hasDecimals: false }} />
                 <h2><a href={productUrl} onClick={handleOnClick}>{product.title}</a></h2>
             </div>
 

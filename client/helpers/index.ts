@@ -5,6 +5,13 @@ export function formatNumberWithDots(number: number)
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
+export function formatDecimals(decimals: number)
+{
+    let _decimals = decimals.toString().substring(0,2);
+    _decimals = _decimals.padStart(2, '0');
+    return _decimals;    
+}
+
 export function setJsonStorage(itemName: string, jsonObject: any)
 {   
     const jsonValue = JSON.stringify(jsonObject);
