@@ -16,8 +16,9 @@ export default function ConfigureRoutes
 )
 {
     // Configura la carpeta 'public' como directorio de archivos estáticos
-    application.use(express.static(path.join(__dirname, '../../client/public')));
+    application.use(express.static(path.join(__dirname, '../../public')));
 
     // Configuro los endpoints desde los Controllers con Awilix Express
     application.use(loadControllers('../controllers/*.ts', { cwd: __dirname }));
+    application.use(loadControllers('../controllers/*.tsx', { cwd: __dirname }));
 }

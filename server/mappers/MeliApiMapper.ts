@@ -1,6 +1,4 @@
-import ItemResultDto from "../dtos/ItemResultDto";
-import QueryItemDto from "../dtos/item/QueryItemDto";
-import QueryResultDto from "../dtos/QueryResultDto";
+import ItemResultDto from "../../common/dtos/ItemResultDto";
 import { MeliCategoryDto } from "../dtos/meli/MeliCategoryDto";
 import MeliProductDescriptionDto from "../dtos/meli/MeliProductDescriptionDto";
 import MeliProductDto from "../dtos/meli/MeliProductDto";
@@ -8,6 +6,8 @@ import MeliQueryProductDto from "../dtos/meli/MeliQueryProductDto";
 import MeliQueryResultDto from "../dtos/meli/MeliQueryResultDto";
 import Helper from "../helpers/Helper";
 import MeliSellerDto from "../dtos/meli/MeliSellerDto";
+import QueryItemDto from "../dtos/QueryItemDto";
+import QueryResultDto from "../dtos/QueryResultDto";
 
 // const getQualityPictureFromProduct = (prdouct: MeliProductDetailDto, minWidth:number = 720 ): string => {
 

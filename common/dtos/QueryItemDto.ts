@@ -1,12 +1,10 @@
+import PriceDto from "./PriceDto";
+
 export default interface QueryItemDto
 {    
     id: string,
     title: string,
-    price: {
-        currency: string,
-        amount: number,
-        decimals: number
-    },
+    price: PriceDto,
     picture: string,
     condition: string,
     free_shipping: boolean,

@@ -1,0 +1,217 @@
+/** -------------------------
+    GLOBAL
+-------------------------- */
+
+* 
+{
+    box-sizing: border-box;
+    margin: 0px;
+    padding: 0px;
+}
+
+body
+{
+    font-size: var(--main-font-size);
+    font-family: var(--main-font-family);
+    color: var(--main-text-color);
+    background-color: var(--main-bg-color);
+}
+
+/** -------------------------
+    LAYOUT
+-------------------------- */
+
+/* Top Bar */
+
+#top-bar 
+{
+    position: fixed;
+    left: 0px;
+    top: 0px;
+
+    display: flex;
+    align-items: center;
+
+    width: 100%;
+    height: var(--main-top-bar-height);
+    overflow: hidden;
+
+    padding: .5rem 1.5rem;
+    background-color: var(--brand-bg-color);
+}
+
+#top-bar .search-container 
+{
+    width: var(--main-content-width);
+    display: flex;
+    margin: 0px auto;
+    position: relative;
+}
+
+#top-bar .search-container .logo
+{
+    margin-right: 1.25rem;
+}
+
+#top-bar .search-container .logo a
+{
+    display: block;
+    height: var(--main-top-bar-height);
+    width: var(--main-top-bar-height);
+}
+
+#top-bar .search-container .logo img
+{
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+    object-position: center center;
+}
+
+#top-bar .search-container form
+{
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+}
+
+#top-bar .search-container form input[name='search']
+{
+    width: 100%;    
+    padding: .25rem .5rem;
+    border: none;
+    border-radius: 2px 0px 0px 2px;
+    max-height: var(--main-top-bar-items-height);
+    min-height: var(--main-top-bar-items-height);
+    z-index: 1;
+}
+
+#top-bar .search-container form button[type='submit']
+{
+    padding: .25rem .5rem;
+    margin: 0px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    overflow: hidden;
+    border-radius: 0px 2px 2px 0px;
+    max-width: calc(var(--main-top-bar-items-height) * 1.2);
+    min-width: calc(var(--main-top-bar-items-height) * 1.2);
+    max-height: var(--main-top-bar-items-height);
+    min-height: var(--main-top-bar-items-height);
+}
+
+#top-bar .search-container form button[type='submit'] span
+{
+    font-size: 1.2rem;
+}
+
+/* Content */
+
+#content
+{
+    margin-top: var(--main-top-bar-height);
+    padding: 0px 1.5rem;
+}
+
+#content > section
+{
+    max-width: var(--main-content-width);
+    margin: 0px auto calc(var(--main-gap)*1.5);
+}
+
+/** -------------------------
+    PRICE COMPONENT
+-------------------------- */
+
+.price
+{
+    padding: calc(var(--product-info-gap)*2) 0px;
+    font-weight: 500;
+    font-size: 1.1rem;
+    color: var(--main-text-color);
+    display: flex;
+    gap: .2rem;
+    align-items: center;
+}
+
+.price > .currency
+{
+    font-size: calc(1em * 1.15);
+    font-weight: 400;    
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.price > .decimal
+{
+    font-size: calc(1em * .5);
+    align-self: center;
+    font-weight: 400;
+    margin-top: -.5em;
+}
+
+.price > .free-shipping,
+.price > .free-shipping.off
+{
+    visibility: hidden;
+}
+
+.price > .free-shipping.on
+{
+    visibility: visible !important;
+    font-size: .5rem;
+    padding: 3px;
+    background-color: var(--free-shipping-color);
+    border-radius: .5rem;
+    color: #333;
+    margin-left: 3px;
+}
+
+/** -------------------------
+    CARD COMPONENT
+-------------------------- */
+
+.card
+{
+    background-color: var(--section-bg-color);
+    border-radius: 3px;
+    box-shadow: 0px 1px 2px var(--main-border-color);
+    padding: 1rem;
+}
+
+/** -------------------------
+    BREADCRUMB COMPONENT
+-------------------------- */
+
+.breadcrumb
+{
+    list-style-type: none;
+    display: flex;
+    padding: calc(var(--main-gap)*.75) 0;
+}
+
+.breadcrumb li
+{
+    font-size: var(--category-list-font-size);
+    color: var(--main-text-color-gray);
+    display: flex;
+    align-items: center;
+}
+
+.breadcrumb li:last-child
+{
+    font-weight: 600;
+    color: var(--main-text-color-gray);
+}
+
+.breadcrumb li:not(:last-child)::after
+{
+    content: 'arrow_forward_ios';
+    margin: 0px .25rem;
+    color: var(--main-text-color-gray);
+    font-family: 'Material Symbols Outlined';
+    font-size: var(--category-list-arrow-font-size);
+    text-decoration: none !important;
+}

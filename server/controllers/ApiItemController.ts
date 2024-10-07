@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import MeliService from "../services/MeliService";
 import { GET, route } from "awilix-express";
+import HttpNotFoundError from "../errors/HttpNotFoundError";
 import QueryResultDto from "../dtos/QueryResultDto";
 import ItemResultDto from "../dtos/ItemResultDto";
-import HttpNotFoundError from "../errors/HttpNotFoundError";
 
 @route('/api/items')
 export default class ApiItemController

@@ -1,4 +1,4 @@
-import QueryItemDto from "./item/QueryItemDto"
+import QueryItemDto from "./QueryItemDto"
 
 export default interface QueryResultDto
 {

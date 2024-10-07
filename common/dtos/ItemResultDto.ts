@@ -1,4 +1,4 @@
-import { ItemDto } from "./item/ItemDto"
+import ItemDto from "./ItemDto"
 
 export default interface ItemResultDto
 {
