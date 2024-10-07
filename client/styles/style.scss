@@ -44,6 +44,8 @@ body
     padding: .5rem 1.5rem;
     background-color: var(--brand-bg-color);
 
+    z-index: 1;
+
     .search-container 
     {
         width: var(--main-content-width);
@@ -103,10 +105,16 @@ body
                 min-width: calc(var(--main-top-bar-items-height) * 1.2);
                 max-height: var(--main-top-bar-items-height);
                 min-height: var(--main-top-bar-items-height);
+                background-color: var(--search-button-bg-color);
+                transition: background-color .25s;
 
                 span
                 {
                     font-size: 1.2rem;
+                }
+
+                &:hover {
+                    background-color: var(--search-button-bg-color-hover);
                 }
             }
         }
@@ -240,5 +248,27 @@ body
             cursor: auto;
             text-decoration: none;
         }
+    }
+}
+
+/** -------------------------
+    BUY BUTTON COMPONENT
+-------------------------- */
+
+.buy-button
+{  
+    width: 100%;
+    border: none;
+    border-radius: 3px;
+    background-color: var(--buy-button-bg-color);
+    line-height: 2.25rem;
+    text-align: center;
+    color: var(--buy-button-text-color);
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color .25s;
+
+    &:hover {
+        background-color: var(--buy-button-bg-color-hover);
     }
 }

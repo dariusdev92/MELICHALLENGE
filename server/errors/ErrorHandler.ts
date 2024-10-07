@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import HttpError from "./HttpError";
 import HttpNotFoundError from "./HttpNotFoundError";
 import logger from "../logger";
+import getErrorPage from "./ErrorPage";
 
 const parseRequest = (request: Request): any =>
 {

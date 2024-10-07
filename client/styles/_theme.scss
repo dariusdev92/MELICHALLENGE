@@ -31,6 +31,11 @@
         COMPONENTES
     -------------------------- */
 
+    /** Search Button */
+    --search-button-bg-color: #f0f0f0;
+    --search-button-bg-color-hover: #e0e0e0;    
+    --search-button-icon-color: white;
+
     /** Category List */
     --category-list-font-size: 10px;
     --category-list-arrow-font-size: var(--main-font-mini-size);
@@ -47,6 +52,7 @@
 
     /** Button */
     --buy-button-bg-color: #3483FA;
+    --buy-button-bg-color-hover: #347be6;    
     --buy-button-text-color: white;
 
 }

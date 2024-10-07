@@ -23,7 +23,7 @@ export default function App({state = {}}: props)
                 <Route index element={<HomePage />} />
                 <Route path="items" element={<QueryResultPage result={state.queryResult} />} />
                 <Route path="items/:id" element={<ProductDetailPage result={state.productDetail } />}  />
-                <Route path="*" element={<NoPage />} />
+                <Route path="/notfound" element={<NoPage />} />
             </Route>
         </Routes>
     </>;

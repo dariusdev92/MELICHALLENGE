@@ -33,7 +33,7 @@ export default class ItemController
                     <App state={state} />
                 </StaticRouter>
             );
-            const body = await this.renderHTML(appHtml, state);
+            const body = await Helper.renderHTML(appHtml, state);
 
             response.send(body);
         }
@@ -58,7 +58,7 @@ export default class ItemController
                     <App state={state} />
                 </StaticRouter>
             );
-            const body = await this.renderHTML(appHtml, state);
+            const body = await Helper.renderHTML(appHtml, state);
 
             response.send(body);
         }
@@ -68,12 +68,4 @@ export default class ItemController
         }
     }
 
-    private async renderHTML(html: string, state: any): Promise<string>
-    {
-        const indexHtml = await Helper.GetIndexHtmlToStringAsync();
-        const finalHtml = indexHtml
-                            .replace("<!-- REACT_APP -->", html)
-                            .replace("{ /* INITIAL STATE */ }", JSON.stringify(state));
-        return finalHtml;
-    }
 }

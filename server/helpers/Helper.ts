@@ -40,4 +40,14 @@ export default class Helper
 
         return result;
     }
+
+    static async renderHTML(html: string, state: any = {}): Promise<string>
+    {
+        const indexHtml = await Helper.GetIndexHtmlToStringAsync();
+        const finalHtml = indexHtml
+                            .replace("<!-- REACT_APP -->", html)
+                            .replace("{ /* INITIAL STATE */ }", JSON.stringify(state));
+        return finalHtml;
+    }
+
 }
